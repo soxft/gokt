@@ -21,8 +21,8 @@ func New(ctx *gin.Context) *Gpi {
 // - success: A boolean indicating the success status.
 // - msg: A string containing the message to be sent.
 // - data: An interface{} containing the data to be sent.
-func (c *Gpi) Out(success bool, msg string, data interface{}) {
-	c.Ctx.JSON(200, gin.H{
+func (c *Gpi) Out(code int, success bool, msg string, data interface{}) {
+	c.Ctx.JSON(code, gin.H{
 		"success": success,
 		"message": msg,
 		"data":    data,
@@ -34,7 +34,7 @@ func (c *Gpi) Out(success bool, msg string, data interface{}) {
 // Parameters:
 // - msg: A string containing the success message.
 func (c *Gpi) Success(msg string) {
-	c.Out(true, msg, gin.H{})
+	c.Out(200, true, msg, gin.H{})
 }
 
 // SuccessWithData sends a JSON response indicating a successful operation with the given message and data.
@@ -43,7 +43,7 @@ func (c *Gpi) Success(msg string) {
 // - msg: A string containing the success message.
 // - data: An interface{} containing the data to be sent.
 func (c *Gpi) SuccessWithData(msg string, data interface{}) {
-	c.Out(true, msg, data)
+	c.Out(200, true, msg, data)
 }
 
 // Fail sends a JSON response indicating a failed operation with the given message.
@@ -51,7 +51,7 @@ func (c *Gpi) SuccessWithData(msg string, data interface{}) {
 // Parameters:
 // - msg: A string containing the failure message.
 func (c *Gpi) Fail(msg string) {
-	c.Out(false, msg, gin.H{})
+	c.Out(200, false, msg, gin.H{})
 }
 
 // FailWithData sends a JSON response indicating a failed operation with the given message and data.
@@ -60,7 +60,11 @@ func (c *Gpi) Fail(msg string) {
 // - msg: A string containing the failure message.
 // - data: An interface{} containing the data to be sent.
 func (c *Gpi) FailWithData(msg string, data interface{}) {
-	c.Out(false, msg, data)
+	c.Out(200, false, msg, data)
+}
+
+func (c *Gpi) FailWithHttpCode(code int, msg string) {
+	c.Out(code, false, msg, gin.H{})
 }
 
 // Abort sends a JSON response with the given HTTP status code, message, and error code, and aborts the request.
@@ -69,12 +73,12 @@ func (c *Gpi) FailWithData(msg string, data interface{}) {
 // - httpCode: An integer representing the HTTP status code.
 // - msg: A string containing the abort message.
 // - errorCode: An integer representing the error code.
-func (c *Gpi) Abort(httpCode int, msg string, errorCode int) {
-	c.Ctx.AbortWithStatusJSON(httpCode, gin.H{
+func (c *Gpi) Abort(code int, msg string, error string) {
+	c.Ctx.AbortWithStatusJSON(code, gin.H{
 		"success": false,
 		"message": msg,
 		"data": gin.H{
-			"errno": errorCode,
+			"error": error,
 		},
 	})
 }
@@ -84,6 +88,14 @@ func (c *Gpi) Abort(httpCode int, msg string, errorCode int) {
 // Parameters:
 // - msg: A string containing the abort message.
 // - errorCode: An integer representing the error code.
-func (c *Gpi) Abort401(msg string, errorCode int) {
-	c.Abort(401, msg, errorCode)
+func (c *Gpi) Abort401(msg string, errors string) {
+	c.Abort(401, msg, errors)
+}
+
+func (c *Gpi) Abort200(msg string, errors string) {
+	c.Abort(200, msg, errors)
+}
+
+func (c *Gpi) Abort204(msg string, errors string) {
+	c.Abort(200, msg, errors)
 }
