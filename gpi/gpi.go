@@ -15,9 +15,10 @@ func New(ctx *gin.Context) *Gpi {
 	}
 }
 
-// Out sends a JSON response with the given success status, message, and data.
+// Out sends a JSON response with the given HTTP status code, success status, message, and data.
 //
 // Parameters:
+// - code: An integer representing the HTTP status code.
 // - success: A boolean indicating the success status.
 // - msg: A string containing the message to be sent.
 // - data: An interface{} containing the data to be sent.
@@ -63,16 +64,21 @@ func (c *Gpi) FailWithData(msg string, data interface{}) {
 	c.Out(200, false, msg, data)
 }
 
+// FailWithHttpCode sends a JSON response indicating a failed operation with the given HTTP status code and message.
+//
+// Parameters:
+// - code: An integer representing the HTTP status code.
+// - msg: A string containing the failure message.
 func (c *Gpi) FailWithHttpCode(code int, msg string) {
 	c.Out(code, false, msg, gin.H{})
 }
 
-// Abort sends a JSON response with the given HTTP status code, message, and error code, and aborts the request.
+// Abort sends a JSON response with the given HTTP status code, message, and error, and aborts the request.
 //
 // Parameters:
-// - httpCode: An integer representing the HTTP status code.
+// - code: An integer representing the HTTP status code.
 // - msg: A string containing the abort message.
-// - errorCode: An integer representing the error code.
+// - error: A string containing the error message.
 func (c *Gpi) Abort(code int, msg string, error string) {
 	c.Ctx.AbortWithStatusJSON(code, gin.H{
 		"success": false,
@@ -83,19 +89,29 @@ func (c *Gpi) Abort(code int, msg string, error string) {
 	})
 }
 
-// Abort401 sends a JSON response with a 401 HTTP status code, the given message, and error code, and aborts the request.
+// Abort401 sends a JSON response with a 401 HTTP status code, the given message, and error, and aborts the request.
 //
 // Parameters:
 // - msg: A string containing the abort message.
-// - errorCode: An integer representing the error code.
-func (c *Gpi) Abort401(msg string, errors string) {
-	c.Abort(401, msg, errors)
+// - error: A string containing the error message.
+func (c *Gpi) Abort401(msg string, error string) {
+	c.Abort(401, msg, error)
 }
 
-func (c *Gpi) Abort200(msg string, errors string) {
-	c.Abort(200, msg, errors)
+// Abort200 sends a JSON response with a 200 HTTP status code, the given message, and error, and aborts the request.
+//
+// Parameters:
+// - msg: A string containing the abort message.
+// - error: A string containing the error message.
+func (c *Gpi) Abort200(msg string, error string) {
+	c.Abort(200, msg, error)
 }
 
-func (c *Gpi) Abort204(msg string, errors string) {
-	c.Abort(200, msg, errors)
+// Abort204 sends a JSON response with a 204 HTTP status code, the given message, and error, and aborts the request.
+//
+// Parameters:
+// - msg: A string containing the abort message.
+// - error: A string containing the error message.
+func (c *Gpi) Abort204(msg string, error string) {
+	c.Abort(204, msg, error)
 }
