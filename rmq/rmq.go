@@ -3,10 +3,11 @@ package rmq
 import (
 	"context"
 	"encoding/json"
-	"github.com/redis/go-redis/v9"
 	"log"
 	"sync"
 	"time"
+
+	"github.com/redis/go-redis/v9"
 )
 
 func New(redis *redis.Client, options ...QueueOption) MessageQueue {
@@ -14,6 +15,7 @@ func New(redis *redis.Client, options ...QueueOption) MessageQueue {
 		ctx:        context.Background(),
 		maxRetries: 3,
 		interval:   500, // 500ms
+		redis:      redis,
 	}
 
 	for _, opt := range options {
